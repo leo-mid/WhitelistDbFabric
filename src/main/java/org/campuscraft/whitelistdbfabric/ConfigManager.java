@@ -12,6 +12,14 @@ public class ConfigManager {
 
     private static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
 
+    public boolean isEnabled() {
+        return config.enabled;
+    }
+
+    public void setWhitelistEnabled(boolean enabled) {
+        config.enabled = enabled;
+    }
+
     public static class Config {
         private String host = "localhost";
         private int port = 5432;
@@ -20,6 +28,7 @@ public class ConfigManager {
         private String password = "password";
         private boolean ssl = false;
         private String message = "You are not whitelisted!";
+        private boolean enabled = true;
 
 
         public String jdbcUrl() {
@@ -34,7 +43,6 @@ public class ConfigManager {
         public String getPassword(){
             return this.password;
         }
-
     }
 
     private final File configFile;

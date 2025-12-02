@@ -32,7 +32,7 @@ public class Whitelistdbfabric implements ModInitializer {
                 cfg.getPassword()
         );
 
-        whitelistHandler = new WhitelistHandler(dbManager);
+        whitelistHandler = new WhitelistHandler(dbManager, configManager);
 
         registerCommands();
         registerEvents();

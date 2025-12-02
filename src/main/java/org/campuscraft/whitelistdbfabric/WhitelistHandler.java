@@ -4,11 +4,14 @@ import net.minecraft.server.network.ServerPlayerEntity;
 
 public class WhitelistHandler {
 
-    private boolean whitelistEnabled = true;
+    private boolean whitelistEnabled;
     private final DbManager db;
+    private final ConfigManager config;
 
-    public WhitelistHandler(DbManager db) {
+    public WhitelistHandler(DbManager db, ConfigManager config) {
         this.db = db;
+        this.config = config;
+        this.whitelistEnabled = this.config.isEnabled();
     }
 
     public boolean isWhitelistEnabled() {
@@ -17,6 +20,8 @@ public class WhitelistHandler {
 
     public void toggleWhitelist() {
         whitelistEnabled = !whitelistEnabled;
+        config.setWhitelistEnabled(whitelistEnabled);
+        config.save();
     }
 
     public boolean allowPlayer(ServerPlayerEntity player) {
