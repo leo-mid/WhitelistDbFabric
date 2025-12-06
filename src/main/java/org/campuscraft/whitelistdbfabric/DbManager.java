@@ -27,4 +27,55 @@ public class DbManager {
         }
         return false;
     }
+
+    public boolean isPlayerBanned(UUID uuid) {
+        if (conn == null) return false;
+        try( PreparedStatement st = conn.prepareStatement("SELECT banned FROM server_whitelists WHERE uuid = ? LIMIT 1")) {
+            st.setObject(1,uuid);
+            try(ResultSet rs = st.executeQuery()) {
+                if(rs.next()) {
+                    return rs.getBoolean("banned");
+                }
+            }
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+        return false;
+    }
+
+    public boolean banPlayer(UUID uuid){
+        if (conn == null) return false;
+
+        if(isPlayerWhitelisted(uuid)) {
+            String sql =  "UPDATE server_whitelists SET banned = true WHERE uuid = ?";
+            try {
+                PreparedStatement st = conn.prepareStatement(sql);
+                st.setObject(1, uuid);
+                st.executeUpdate();
+                return true;
+            } catch (SQLException e) {
+                System.out.println(e.getMessage() + uuid);
+            }
+        }
+        return false;
+    }
+
+    public boolean unbanPlayer(String username){
+        if (conn == null) return false;
+
+        UUID uuid = ApiManager.getUUID(username);
+
+        String sql =  "UPDATE server_whitelists SET banned = false WHERE UUID = ?";
+        try {
+            PreparedStatement st = conn.prepareStatement(sql);
+            st.setObject(1, uuid);
+            st.executeUpdate();
+            return true;
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+        return false;
+    }
+
+
 }

@@ -29,4 +29,8 @@ public class WhitelistHandler {
 
         return db.isPlayerWhitelisted(player.getUuid());
     }
+
+    public boolean checkBanned(ServerPlayerEntity player) {
+        return !db.isPlayerBanned(player.getUuid());
+    }
 }

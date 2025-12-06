@@ -12,14 +12,6 @@ public class ConfigManager {
 
     private static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
 
-    public boolean isEnabled() {
-        return config.enabled;
-    }
-
-    public void setWhitelistEnabled(boolean enabled) {
-        config.enabled = enabled;
-    }
-
     public static class Config {
         private String host = "localhost";
         private int port = 5432;
@@ -29,6 +21,7 @@ public class ConfigManager {
         private boolean ssl = false;
         private String message = "You are not whitelisted!";
         private boolean enabled = true;
+        private String banReason = "You have been banned!";
 
 
         public String jdbcUrl() {
@@ -87,4 +80,15 @@ public class ConfigManager {
         return config.message;
     }
 
+    public boolean isEnabled() {
+        return config.enabled;
+    }
+
+    public void setWhitelistEnabled(boolean enabled) {
+        config.enabled = enabled;
+    }
+
+    public String getBanReason() {
+        return config.banReason;
+    }
 }
