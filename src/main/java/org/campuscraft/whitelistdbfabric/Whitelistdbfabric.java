@@ -77,14 +77,14 @@ public class Whitelistdbfabric implements ModInitializer {
         );
         CommandRegistrationCallback.EVENT.register(
                 (dispatcher, registryAccess, environment) -> dispatcher.register(
-                        CommandManager.literal("banPlayer")
+                        CommandManager.literal("wban")
                             .requires(source -> source.hasPermissionLevel(4))
                                 .then(CommandManager.argument("player", StringArgumentType.greedyString())
                                 .executes(this::banPlayer))
         ));
         CommandRegistrationCallback.EVENT.register(
                 (dispatcher, registryAccess, environment) -> dispatcher.register(
-                        CommandManager.literal("unban")
+                        CommandManager.literal("wunban")
                             .requires(source -> source.hasPermissionLevel(4))
                                 .then(CommandManager.argument("player", StringArgumentType.greedyString())
                                 .executes(this::unbanPlayer))
@@ -97,17 +97,10 @@ public class Whitelistdbfabric implements ModInitializer {
 
         if (playerToBan != null) {
             String reason = configManager.getBanReason();
-            System.out.println("Got to Api");
             UUID uuid = ApiManager.getUUID(playerToBan);
-            System.out.println("Did Api got " + uuid);
 
             if(dbManager.banPlayer(uuid)){
                 MinecraftServer server = source.getServer();
-
-                System.out.println("Got to If statement");
-
-                System.out.println(server.getPlayerManager().getPlayer(uuid).isDisconnected());
-
                 if(Objects.requireNonNull(server.getPlayerManager().getPlayer(uuid)).isDisconnected()){
                     source.sendFeedback(() -> Text.literal("Banned player: " + playerToBan), true);
                 } else{

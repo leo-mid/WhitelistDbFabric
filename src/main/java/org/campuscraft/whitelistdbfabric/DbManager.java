@@ -47,7 +47,7 @@ public class DbManager {
         if (conn == null) return false;
 
         if(isPlayerWhitelisted(uuid)) {
-            String sql =  "UPDATE server_whitelists SET banned = true WHERE uuid = ?";
+            String sql = "UPDATE server_whitelists SET banned = true WHERE uuid = ?";
             try {
                 PreparedStatement st = conn.prepareStatement(sql);
                 st.setObject(1, uuid);
