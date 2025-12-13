@@ -4,6 +4,8 @@ import com.mojang.authlib.GameProfile;
 import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
+import eu.pb4.placeholders.api.Placeholders;
+import eu.pb4.placeholders.api.PlaceholderResult;
 import me.lucko.fabric.api.permissions.v0.Permissions;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
@@ -16,6 +18,7 @@ import net.minecraft.server.command.ServerCommandSource;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
+import net.minecraft.util.Identifier;
 import org.campuscraft.whitelistdbfabric.mixin.ServerLoginNetworkHandlerAccessor;
 
 import java.io.File;
@@ -32,15 +35,12 @@ public class Whitelistdbfabric implements ModInitializer {
 
     @Override
     public void onInitialize() {
-
-        // ---- Load config from config directory ----
         File configDir = new File("config");
         if (!configDir.exists()) configDir.mkdirs();
 
         configManager = new ConfigManager(configDir);
         ConfigManager.Config cfg = configManager.get();
 
-        // ---- Create DB manager using config ----
         this.dbManager = new DbManager(
                 cfg.jdbcUrl(),
                 cfg.getUsername(),
@@ -51,6 +51,18 @@ public class Whitelistdbfabric implements ModInitializer {
 
         registerCommands();
         registerEvents();
+
+        Placeholders.register(Identifier.of("whitelistdb", "school"), (ctx, arg) -> {
+            if (arg == null) {
+                return PlaceholderResult.invalid("No argument!");
+            }
+
+            assert ctx.player() != null;
+            UUID uuid = ctx.player().getUuid();
+            String school = dbManager.getPlayerSchool(uuid);
+
+            return PlaceholderResult.value(school);
+        });
 
         System.out.println("[WhitelistDB] Loaded config and initialized database connection.");
     }

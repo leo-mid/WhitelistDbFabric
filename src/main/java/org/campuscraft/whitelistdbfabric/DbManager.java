@@ -122,7 +122,7 @@ public class DbManager {
 
         UUID uuid = ApiManager.getUUID(username);
 
-        String sql =  "UPDATE server_whitelists SET banned = false WHERE UUID = ?";
+        String sql = "UPDATE server_whitelists SET banned = false WHERE UUID = ?";
         try {
             PreparedStatement st = conn.prepareStatement(sql);
             st.setObject(1, uuid);
@@ -132,5 +132,33 @@ public class DbManager {
             LOGGER.error("Failed to unban the user: ", e);
         }
         return false;
+    }
+
+    public String getPlayerSchool(UUID uuid){
+        ConfigManager.Config cfg = configManager.get();
+        if(conn == null){
+            try {
+                conn = DriverManager.getConnection(cfg.jdbcUrl(), cfg.getUsername(), cfg.getPassword());
+            } catch (SQLException e) {
+                LOGGER.error("Failed to connect to database", e);
+            }
+        }
+
+        if(conn == null){
+            return null;
+        }
+
+        String sql = "SELECT school FROM server_whitelists WHERE uuid = ? LIMIT 1";
+        try{
+            PreparedStatement st = conn.prepareStatement(sql);
+            st.setObject(1, uuid);
+            ResultSet rs = st.executeQuery();
+            if(rs.next()){
+                return rs.getString("school");
+            }
+        } catch (SQLException e){
+            LOGGER.error("Failed to get school for user: ", e);
+        }
+        return null;
     }
 }
