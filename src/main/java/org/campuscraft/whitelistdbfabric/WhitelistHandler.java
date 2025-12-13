@@ -2,6 +2,8 @@ package org.campuscraft.whitelistdbfabric;
 
 import net.minecraft.server.network.ServerPlayerEntity;
 
+import java.util.UUID;
+
 public class WhitelistHandler {
 
     private boolean whitelistEnabled;
@@ -24,13 +26,13 @@ public class WhitelistHandler {
         config.save();
     }
 
-    public boolean allowPlayer(ServerPlayerEntity player) {
+    public boolean allowPlayer(UUID uuid) {
         if (!whitelistEnabled) return true;
 
-        return db.isPlayerWhitelisted(player.getUuid());
+        return db.isPlayerWhitelisted(uuid);
     }
 
-    public boolean checkBanned(ServerPlayerEntity player) {
-        return !db.isPlayerBanned(player.getUuid());
+    public boolean checkBanned(UUID uuid) {
+        return !db.isPlayerBanned(uuid);
     }
 }

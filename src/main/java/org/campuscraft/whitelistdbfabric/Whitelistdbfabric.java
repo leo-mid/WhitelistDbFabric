@@ -1,11 +1,13 @@
 package org.campuscraft.whitelistdbfabric;
 
+import com.mojang.authlib.GameProfile;
 import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
+import net.fabricmc.fabric.api.networking.v1.ServerLoginConnectionEvents;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayConnectionEvents;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.PlayerManager;
@@ -14,6 +16,8 @@ import net.minecraft.server.command.ServerCommandSource;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
+import org.campuscraft.whitelistdbfabric.mixin.ServerLoginNetworkHandlerAccessor;
+
 import java.io.File;
 import java.util.Objects;
 import java.util.UUID;
@@ -138,16 +142,20 @@ public class Whitelistdbfabric implements ModInitializer {
 
     private void registerEvents() {
         // Player join = check DB whitelist
-        ServerPlayConnectionEvents.JOIN.register((handler, sender, server) -> {
-            if (!whitelistHandler.allowPlayer(handler.getPlayer())) {
-                handler.disconnect(
-                        Text.literal(configManager.getMessage())
-                );
-            }
-            if(!whitelistHandler.checkBanned(handler.getPlayer())) {
-                handler.disconnect(Text.literal(configManager.getBanReason()));
-            }
-        });
+        ServerLoginConnectionEvents.QUERY_START.register(
+                (handler, server, sender, synchronizer) -> {
+
+                    GameProfile profile = ((ServerLoginNetworkHandlerAccessor) handler).getProfile();
+                    UUID uuid = profile.getId();
+
+                    if (!whitelistHandler.allowPlayer(uuid)) {
+                        handler.disconnect(Text.literal(configManager.getMessage()));
+                    }
+                    if(!whitelistHandler.checkBanned(uuid)) {
+                        handler.disconnect(Text.literal(configManager.getBanReason()));
+                    }
+                }
+        );
 
         ServerLifecycleEvents.SERVER_STARTED.register(server -> {
             System.out.println("[WhitelistDB] Whitelist enabled = "
