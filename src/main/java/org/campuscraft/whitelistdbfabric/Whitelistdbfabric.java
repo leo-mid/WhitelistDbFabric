@@ -101,19 +101,23 @@ public class Whitelistdbfabric implements ModInitializer {
 
             if(dbManager.banPlayer(uuid)){
                 MinecraftServer server = source.getServer();
-                if(Objects.requireNonNull(server.getPlayerManager().getPlayer(uuid)).isDisconnected()){
-                    source.sendFeedback(() -> Text.literal("Banned player: " + playerToBan), true);
-                } else{
-                    PlayerManager playerManager = server.getPlayerManager();
+                PlayerManager playerManager = server.getPlayerManager();
+
+                if(this.isPlayerConnected(server, uuid)) {
                     ServerPlayerEntity player = playerManager.getPlayer(uuid);
-                    player.networkHandler.disconnect(Text.literal(reason).formatted(Formatting.RED));
+                    if (player != null) {
+                        player.networkHandler.disconnect(Text.literal(reason).formatted(Formatting.RED));
+                        source.sendFeedback(() -> Text.literal("Banned player: " + playerToBan), true);
+                    }
+                } else{
                     source.sendFeedback(() -> Text.literal("Banned player: " + playerToBan), true);
                 }
                 return 1;
             }
+            source.sendError(Text.of("Player: " + playerToBan + " not found."));
             return 0;
         } else {
-            source.sendError(Text.of("Player: " + playerToBan + " not found or is not online."));
+            source.sendFeedback(() -> Text.literal("Forgot to add the player to ban"), true);
             return 0;
         }
     }
@@ -154,5 +158,11 @@ public class Whitelistdbfabric implements ModInitializer {
             System.out.println("[WhitelistDB] Whitelist enabled = "
                     + whitelistHandler.isWhitelistEnabled());
         });
+    }
+
+    public boolean isPlayerConnected(MinecraftServer server, UUID playerUuid) {
+        ServerPlayerEntity player = server.getPlayerManager().getPlayer(playerUuid);
+        // If getPlayer(uuid) returns null, the player is not currently online (i.e., is "disconnected" or offline)
+        return player != null;
     }
 }
