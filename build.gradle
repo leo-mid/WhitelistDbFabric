@@ -26,7 +26,8 @@ dependencies {
     modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
 
     modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
-    runtimeOnly "org.postgresql:postgresql:42.7.3"
+    include(modImplementation("me.lucko:fabric-permissions-api:${project.permission_version}"))
+    include(modImplementation("org.postgresql:postgresql:42.7.3"))
 }
 
 processResources {

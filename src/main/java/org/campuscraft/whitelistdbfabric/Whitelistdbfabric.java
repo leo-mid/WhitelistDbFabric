@@ -4,6 +4,7 @@ import com.mojang.authlib.GameProfile;
 import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
+import me.lucko.fabric.api.permissions.v0.Permissions;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
@@ -59,7 +60,7 @@ public class Whitelistdbfabric implements ModInitializer {
                 (dispatcher, registryAccess, environment) -> dispatcher.register(
                         CommandManager.literal("whitelistdb")
                                 .then(CommandManager.literal("toggle")
-                                        .requires(src -> src.hasPermissionLevel(4))
+                                        .requires(source -> Permissions.check(source, "whitelistdb.admin", false) || source.hasPermissionLevel(4))
                                         .executes(ctx -> {
                                             whitelistHandler.toggleWhitelist();
                                             ctx.getSource().sendFeedback(
@@ -77,14 +78,14 @@ public class Whitelistdbfabric implements ModInitializer {
         CommandRegistrationCallback.EVENT.register(
                 (dispatcher, registryAccess, environment) -> dispatcher.register(
                         CommandManager.literal("wban")
-                            .requires(source -> source.hasPermissionLevel(4))
+                            .requires(source -> Permissions.check(source, "whitelistdb.admin", false) || source.hasPermissionLevel(4))
                                 .then(CommandManager.argument("player", StringArgumentType.greedyString())
                                 .executes(this::banPlayer))
         ));
         CommandRegistrationCallback.EVENT.register(
                 (dispatcher, registryAccess, environment) -> dispatcher.register(
                         CommandManager.literal("wunban")
-                            .requires(source -> source.hasPermissionLevel(4))
+                            .requires(source -> Permissions.check(source, "whitelistdb.admin", false) || source.hasPermissionLevel(4))
                                 .then(CommandManager.argument("player", StringArgumentType.greedyString())
                                 .executes(this::unbanPlayer))
         ));
