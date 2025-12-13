@@ -1,5 +1,8 @@
 package org.campuscraft.whitelistdbfabric;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.File;
 import java.sql.*;
 import java.util.UUID;
@@ -8,13 +11,14 @@ public class DbManager {
 
     private Connection conn;
     private static ConfigManager configManager;
+    public static final Logger LOGGER = LoggerFactory.getLogger("whitelistdb");
 
 
     public DbManager(String url, String user, String pass) {
         try {
             conn = DriverManager.getConnection(url, user, pass);
         } catch (SQLException e) {
-            e.printStackTrace();
+            LOGGER.error("Failed to connect to database", e);
         }
         File configDir = new File("config");
         if (!configDir.exists()) configDir.mkdirs();
@@ -28,7 +32,7 @@ public class DbManager {
             try {
                 conn = DriverManager.getConnection(cfg.jdbcUrl(), cfg.getUsername(), cfg.getPassword());
             } catch (SQLException e) {
-                e.printStackTrace();
+                LOGGER.error("Failed to connect to database", e);
             }
         }
 
@@ -42,7 +46,7 @@ public class DbManager {
                 return rs.next();
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            LOGGER.error("Failed to connect to database", e);
         }
         return false;
     }
@@ -53,7 +57,7 @@ public class DbManager {
             try {
                 conn = DriverManager.getConnection(cfg.jdbcUrl(), cfg.getUsername(), cfg.getPassword());
             } catch (SQLException e) {
-                e.printStackTrace();
+                LOGGER.error("Failed to connect to database", e);
             }
         }
 
@@ -69,7 +73,7 @@ public class DbManager {
                 }
             }
         } catch (SQLException e) {
-            System.out.println(e.getMessage());
+            LOGGER.error("Failed to see if user is banned. Is the user in the whitelist?r");
         }
         return false;
     }
@@ -80,7 +84,7 @@ public class DbManager {
             try {
                 conn = DriverManager.getConnection(cfg.jdbcUrl(), cfg.getUsername(), cfg.getPassword());
             } catch (SQLException e) {
-                e.printStackTrace();
+                LOGGER.error("Failed to connect to database", e);
             }
         }
 
@@ -96,7 +100,7 @@ public class DbManager {
                 st.executeUpdate();
                 return true;
             } catch (SQLException e) {
-                System.out.println(e.getMessage() + uuid);
+                LOGGER.error("Failed to ban the user: ", e);
             }
         }
         return false;
@@ -108,7 +112,7 @@ public class DbManager {
             try {
                 conn = DriverManager.getConnection(cfg.jdbcUrl(), cfg.getUsername(), cfg.getPassword());
             } catch (SQLException e) {
-                e.printStackTrace();
+                LOGGER.error("Failed to connect to database", e);
             }
         }
 
@@ -125,7 +129,7 @@ public class DbManager {
             st.executeUpdate();
             return true;
         } catch (SQLException e) {
-            System.out.println(e.getMessage());
+            LOGGER.error("Failed to unban the user: ", e);
         }
         return false;
     }
