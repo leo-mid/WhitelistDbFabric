@@ -109,18 +109,15 @@ public class Whitelistdbfabric implements ModInitializer {
 
         if (playerToBan != null) {
             String reason = configManager.getBanReason();
-            UUID uuid = ApiManager.getUUID(playerToBan);
 
-            if(dbManager.banPlayer(uuid)){
+            if(dbManager.banPlayer(playerToBan)){
                 MinecraftServer server = source.getServer();
                 PlayerManager playerManager = server.getPlayerManager();
+                ServerPlayerEntity player = playerManager.getPlayer(playerToBan);
 
-                if(this.isPlayerConnected(server, uuid)) {
-                    ServerPlayerEntity player = playerManager.getPlayer(uuid);
-                    if (player != null) {
-                        player.networkHandler.disconnect(Text.literal(reason).formatted(Formatting.RED));
-                        source.sendFeedback(() -> Text.literal("Banned player: " + playerToBan), true);
-                    }
+                if (player != null){
+                  player.networkHandler.disconnect(Text.literal(reason).formatted(Formatting.RED));
+                  source.sendFeedback(() -> Text.literal("Banned player: " + playerToBan), true);
                 } else{
                     source.sendFeedback(() -> Text.literal("Banned player: " + playerToBan), true);
                 }

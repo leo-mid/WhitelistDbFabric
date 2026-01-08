@@ -78,7 +78,7 @@ public class DbManager {
         return false;
     }
 
-    public boolean banPlayer(UUID uuid){
+    public boolean banPlayer(String username){
         ConfigManager.Config cfg = configManager.get();
         if(conn == null){
             try {
@@ -92,16 +92,14 @@ public class DbManager {
             return false;
         }
 
-        if(isPlayerWhitelisted(uuid)) {
-            String sql = "UPDATE server_whitelists SET banned = true WHERE uuid = ?";
-            try {
-                PreparedStatement st = conn.prepareStatement(sql);
-                st.setObject(1, uuid);
-                st.executeUpdate();
-                return true;
-            } catch (SQLException e) {
-                LOGGER.error("Failed to ban the user: ", e);
-            }
+        String sql = "UPDATE server_whitelists SET banned = true WHERE username = ?";
+        try {
+            PreparedStatement st = conn.prepareStatement(sql);
+            st.setObject(1, username);
+            st.executeUpdate();
+            return true;
+        } catch (SQLException e) {
+            LOGGER.error("Failed to ban the user: ", e);
         }
         return false;
     }
@@ -120,12 +118,10 @@ public class DbManager {
             return false;
         }
 
-        UUID uuid = ApiManager.getUUID(username);
-
-        String sql = "UPDATE server_whitelists SET banned = false WHERE UUID = ?";
+        String sql = "UPDATE server_whitelists SET banned = false WHERE username = ?";
         try {
             PreparedStatement st = conn.prepareStatement(sql);
-            st.setObject(1, uuid);
+            st.setObject(1, username);
             st.executeUpdate();
             return true;
         } catch (SQLException e) {
