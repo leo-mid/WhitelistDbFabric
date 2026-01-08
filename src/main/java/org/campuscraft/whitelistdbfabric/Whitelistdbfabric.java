@@ -4,8 +4,8 @@ import com.mojang.authlib.GameProfile;
 import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
-import eu.pb4.placeholders.api.Placeholders;
-import eu.pb4.placeholders.api.PlaceholderResult;
+//import eu.pb4.placeholders.api.Placeholders;
+//import eu.pb4.placeholders.api.PlaceholderResult;
 import me.lucko.fabric.api.permissions.v0.Permissions;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
@@ -18,11 +18,9 @@ import net.minecraft.server.command.ServerCommandSource;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
-import net.minecraft.util.Identifier;
 import org.campuscraft.whitelistdbfabric.mixin.ServerLoginNetworkHandlerAccessor;
 
 import java.io.File;
-import java.util.Objects;
 import java.util.UUID;
 
 public class Whitelistdbfabric implements ModInitializer {
@@ -31,7 +29,7 @@ public class Whitelistdbfabric implements ModInitializer {
 
     private static WhitelistHandler whitelistHandler;
     private static ConfigManager configManager;
-    private static DbManager dbManager;
+    private DbManager dbManager;
 
     @Override
     public void onInitialize() {
@@ -52,17 +50,17 @@ public class Whitelistdbfabric implements ModInitializer {
         registerCommands();
         registerEvents();
 
-        Placeholders.register(Identifier.of("whitelistdb", "school"), (ctx, arg) -> {
-            if (arg == null) {
-                return PlaceholderResult.invalid("No argument!");
-            }
-
-            assert ctx.player() != null;
-            UUID uuid = ctx.player().getUuid();
-            String school = dbManager.getPlayerSchool(uuid);
-
-            return PlaceholderResult.value(school);
-        });
+//        Placeholders.register(Identifier.of("whitelistdb", "school"), (ctx, arg) -> {
+//            if (arg == null) {
+//                return PlaceholderResult.invalid("No argument!");
+//            }
+//
+//            assert ctx.player() != null;
+//            UUID uuid = ctx.player().getUuid();
+//            String school = dbManager.getPlayerSchool(uuid);
+//
+//            return PlaceholderResult.value(school);
+//        });
 
         System.out.println("[WhitelistDB] Loaded config and initialized database connection.");
     }
@@ -72,7 +70,7 @@ public class Whitelistdbfabric implements ModInitializer {
                 (dispatcher, registryAccess, environment) -> dispatcher.register(
                         CommandManager.literal("whitelistdb")
                                 .then(CommandManager.literal("toggle")
-                                        .requires(source -> Permissions.check(source, "whitelistdb.admin", false) || source.hasPermissionLevel(4))
+                                        .requires(source -> Permissions.check(source, "whitelistdb.admin", 4))
                                         .executes(ctx -> {
                                             whitelistHandler.toggleWhitelist();
                                             ctx.getSource().sendFeedback(
@@ -90,14 +88,14 @@ public class Whitelistdbfabric implements ModInitializer {
         CommandRegistrationCallback.EVENT.register(
                 (dispatcher, registryAccess, environment) -> dispatcher.register(
                         CommandManager.literal("wban")
-                            .requires(source -> Permissions.check(source, "whitelistdb.admin", false) || source.hasPermissionLevel(4))
+                            .requires(source -> Permissions.check(source, "whitelistdb.admin", 4))
                                 .then(CommandManager.argument("player", StringArgumentType.greedyString())
                                 .executes(this::banPlayer))
         ));
         CommandRegistrationCallback.EVENT.register(
                 (dispatcher, registryAccess, environment) -> dispatcher.register(
                         CommandManager.literal("wunban")
-                            .requires(source -> Permissions.check(source, "whitelistdb.admin", false) || source.hasPermissionLevel(4))
+                            .requires(source -> Permissions.check(source, "whitelistdb.admin", 4))
                                 .then(CommandManager.argument("player", StringArgumentType.greedyString())
                                 .executes(this::unbanPlayer))
         ));
@@ -152,7 +150,7 @@ public class Whitelistdbfabric implements ModInitializer {
                 (handler, server, sender, synchronizer) -> {
 
                     GameProfile profile = ((ServerLoginNetworkHandlerAccessor) handler).getProfile();
-                    UUID uuid = profile.getId();
+                    UUID uuid = profile.id();
 
                     if (!whitelistHandler.allowPlayer(uuid)) {
                         handler.disconnect(Text.literal(configManager.getMessage()));
