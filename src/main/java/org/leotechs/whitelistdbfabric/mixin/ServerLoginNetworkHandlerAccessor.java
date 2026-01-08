@@ -1,4 +1,4 @@
-package org.campuscraft.whitelistdbfabric.mixin;
+package org.leotechs.whitelistdbfabric.mixin;
 
 import com.mojang.authlib.GameProfile;
 import net.minecraft.server.network.ServerLoginNetworkHandler;

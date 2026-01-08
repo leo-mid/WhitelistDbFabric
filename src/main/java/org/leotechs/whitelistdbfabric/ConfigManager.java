@@ -1,4 +1,4 @@
-package org.campuscraft.whitelistdbfabric;
+package org.leotechs.whitelistdbfabric;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;

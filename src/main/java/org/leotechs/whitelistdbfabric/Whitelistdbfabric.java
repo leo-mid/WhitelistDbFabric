@@ -1,4 +1,4 @@
-package org.campuscraft.whitelistdbfabric;
+package org.leotechs.whitelistdbfabric;
 
 import com.mojang.authlib.GameProfile;
 import com.mojang.brigadier.arguments.StringArgumentType;
@@ -18,7 +18,7 @@ import net.minecraft.server.command.ServerCommandSource;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
-import org.campuscraft.whitelistdbfabric.mixin.ServerLoginNetworkHandlerAccessor;
+import org.leotechs.whitelistdbfabric.mixin.ServerLoginNetworkHandlerAccessor;
 
 import java.io.File;
 import java.util.UUID;

@@ -1,4 +1,4 @@
-package org.campuscraft.whitelistdbfabric;
+package org.leotechs.whitelistdbfabric;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

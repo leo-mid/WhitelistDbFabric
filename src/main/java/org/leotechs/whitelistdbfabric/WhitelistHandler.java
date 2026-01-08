@@ -1,6 +1,4 @@
-package org.campuscraft.whitelistdbfabric;
-
-import net.minecraft.server.network.ServerPlayerEntity;
+package org.leotechs.whitelistdbfabric;
 
 import java.util.UUID;
 
