@@ -11,6 +11,7 @@ import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
 import net.fabricmc.fabric.api.networking.v1.ServerLoginConnectionEvents;
+import net.fabricmc.fabric.api.networking.v1.ServerPlayConnectionEvents;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.PlayerManager;
 import net.minecraft.server.command.CommandManager;
@@ -44,6 +45,13 @@ public class Whitelistdbfabric implements ModInitializer {
                 cfg.getUsername(),
                 cfg.getPassword()
         );
+
+        PlayerCache.init();
+
+        // Cache players on join
+        ServerPlayConnectionEvents.JOIN.register((handler, sender, server) -> {
+            PlayerCache.cachePlayer(handler.getPlayer());
+        });
 
         whitelistHandler = new WhitelistHandler(dbManager, configManager);
 
@@ -108,19 +116,29 @@ public class Whitelistdbfabric implements ModInitializer {
         if (playerToBan != null) {
             String reason = configManager.getBanReason();
 
-            if(dbManager.banPlayer(playerToBan)){
-                MinecraftServer server = source.getServer();
-                PlayerManager playerManager = server.getPlayerManager();
-                ServerPlayerEntity player = playerManager.getPlayer(playerToBan);
-
-                if (player != null){
-                  player.networkHandler.disconnect(Text.literal(reason).formatted(Formatting.RED));
-                  source.sendFeedback(() -> Text.literal("Banned player: " + playerToBan), true);
-                } else{
-                    source.sendFeedback(() -> Text.literal("Banned player: " + playerToBan), true);
+            MinecraftServer server = source.getServer();
+            PlayerManager playerManager = server.getPlayerManager();
+            ServerPlayerEntity player = playerManager.getPlayer(playerToBan);
+            if(player != null){
+                if(dbManager.banPlayer(player.getUuid())){
+                    if (player != null){
+                        player.networkHandler.disconnect(Text.literal(reason).formatted(Formatting.RED));
+                        source.sendFeedback(() -> Text.literal("Banned player: " + playerToBan), true);
+                    } else{
+                        source.sendFeedback(() -> Text.literal("Banned player: " + playerToBan), true);
+                    }
+                    return 1;
                 }
-                return 1;
+            } else {
+                UUID uuid = PlayerCache.getUuid(playerToBan);
+                if(uuid != null){
+                    if(dbManager.banPlayer(uuid)){
+                        source.sendFeedback(() -> Text.literal("Banned player: " + playerToBan), true);
+                        return 1;
+                    }
+                }
             }
+
             source.sendError(Text.of("Player: " + playerToBan + " not found."));
             return 0;
         } else {
@@ -133,8 +151,10 @@ public class Whitelistdbfabric implements ModInitializer {
         ServerCommandSource source = context.getSource();
         String playerToUnban = StringArgumentType.getString(context, "player");
 
-        if (playerToUnban != null) {
-            if(dbManager.unbanPlayer(playerToUnban)){
+        UUID uuid = PlayerCache.getUuid(playerToUnban);
+
+        if (uuid != null) {
+            if(dbManager.unbanPlayer(uuid)){
                 source.sendFeedback(() -> Text.literal("Player: " + playerToUnban + " has been unbanned!"), true);
                 return 1;
             }
