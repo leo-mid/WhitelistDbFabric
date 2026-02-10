@@ -1,12 +1,12 @@
 package org.leotechs.whitelistdbfabric.mixin;
 
 import com.mojang.authlib.GameProfile;
-import net.minecraft.server.network.ServerLoginNetworkHandler;
+import net.minecraft.server.network.ServerLoginPacketListenerImpl;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.gen.Accessor;
 
-@Mixin(ServerLoginNetworkHandler.class)
+@Mixin(ServerLoginPacketListenerImpl.class)
 public interface ServerLoginNetworkHandlerAccessor {
-    @Accessor("profile")
+    @Accessor("authenticatedProfile")
     GameProfile getProfile();
 }
