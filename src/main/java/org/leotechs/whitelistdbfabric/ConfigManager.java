@@ -12,6 +12,8 @@ public class ConfigManager {
 
     private static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
 
+    /// Makes the config class with its default settings
+
     public static class Config {
         private String host = "localhost";
         private int port = 5432;
@@ -29,9 +31,15 @@ public class ConfigManager {
                     (ssl ? "?sslmode=require" : "");
         }
 
+        /// Returns the database username
+        /// @return this.username
+
         public String getUsername(){
             return this.username;
         }
+
+        /// Returns the database password
+        /// @return this.password
 
         public String getPassword(){
             return this.password;
@@ -41,14 +49,22 @@ public class ConfigManager {
     private final File configFile;
     private Config config;
 
+    /// Creates the config manager object
+    /// @param configDir - The directory to save the config file
+
     public ConfigManager(File configDir) {
         this.configFile = new File(configDir, "whitelistdb-config.json");
         load();
     }
 
+    /// Returns the config object
+    /// @return this.config
+
     public Config get() {
         return config;
     }
+
+    /// Loads the config
 
     public void load() {
         try {
@@ -68,6 +84,8 @@ public class ConfigManager {
         }
     }
 
+    /// Saves the config
+
     public void save() {
         try (FileWriter writer = new FileWriter(configFile, StandardCharsets.UTF_8)) {
             GSON.toJson(config, writer);
@@ -75,6 +93,8 @@ public class ConfigManager {
             e.printStackTrace();
         }
     }
+
+    // Getters and setters
 
     public String getMessage() {
         return config.message;

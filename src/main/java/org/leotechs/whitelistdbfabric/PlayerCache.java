@@ -25,7 +25,9 @@ public class PlayerCache {
         load();
     }
 
-    // Cache player when they join
+    /// Caches player when they join
+    /// @param player - the player who just logged in
+
     public static void cachePlayer(ServerPlayer player) {
         String name = player.getName().getString().toLowerCase(Locale.ROOT);
         UUID uuid = player.getUUID();
@@ -34,19 +36,23 @@ public class PlayerCache {
         save();
     }
 
-    // Lookup UUID by name
+    /// Get UUID by name
+    /// @param username - the players username
+    /// @return - the players uuid
     public static UUID getUuid(String username) {
         return CACHE.get(username.toLowerCase(Locale.ROOT));
     }
 
-    // Offline fallback (optional)
+    /// Offline fallback (optional)
+    /// @param username - the players username
+    /// @return - offline players uuid
     public static UUID offlineUuid(String username) {
         return UUID.nameUUIDFromBytes(
                 ("OfflinePlayer:" + username).getBytes(StandardCharsets.UTF_8)
         );
     }
 
-    // Load cache from disk
+    /// Loads the cache from the file
     private static void load() {
         if (!Files.exists(cacheFile)) return;
 
@@ -60,7 +66,7 @@ public class PlayerCache {
         }
     }
 
-    // Save cache to disk
+    /// Saves the cache to the file
     private static void save() {
         try {
             Files.createDirectories(cacheFile.getParent());

@@ -13,6 +13,10 @@ public class DbManager {
     private static ConfigManager configManager;
     public static final Logger LOGGER = LoggerFactory.getLogger("whitelistdb");
 
+    /// Creates the DbManger object
+    /// @param url - The database url
+    /// @param user - The database user
+    /// @param pass - The database password
 
     public DbManager(String url, String user, String pass) {
         try {
@@ -25,6 +29,10 @@ public class DbManager {
 
         configManager = new ConfigManager(configDir);
     }
+
+    /// Checks to see if the player logging in is whitelisted or not
+    /// @param uuid - the players uuid
+    /// @return - if the player is whitelsited or not
 
     public boolean isPlayerWhitelisted(UUID uuid) {
         ConfigManager.Config cfg = configManager.get();
@@ -50,6 +58,10 @@ public class DbManager {
         }
         return false;
     }
+
+    /// Checks to see if the player logging in is banned
+    /// @param uuid - the players uuid
+    /// @return - if the player is banned or not
 
     public boolean isPlayerBanned(UUID uuid) {
         ConfigManager.Config cfg = configManager.get();
@@ -78,6 +90,10 @@ public class DbManager {
         return false;
     }
 
+    /// Ban the player given by the uuid
+    /// @param uuid - The players uuid
+    /// @return - If it was successful or not
+
     public boolean banPlayer(UUID uuid){
         ConfigManager.Config cfg = configManager.get();
         if(conn == null){
@@ -103,6 +119,10 @@ public class DbManager {
         }
         return false;
     }
+
+    /// Unbans the player given by the uuid
+    /// @param uuid - The players uuid
+    /// @return - If it was successful or not
 
     public boolean unbanPlayer(UUID uuid){
         ConfigManager.Config cfg = configManager.get();
@@ -130,31 +150,36 @@ public class DbManager {
         return false;
     }
 
-    public String getPlayerSchool(UUID uuid){
-        ConfigManager.Config cfg = configManager.get();
-        if(conn == null){
-            try {
-                conn = DriverManager.getConnection(cfg.jdbcUrl(), cfg.getUsername(), cfg.getPassword());
-            } catch (SQLException e) {
-                LOGGER.error("Failed to connect to database", e);
-            }
-        }
+    /// Gets the player school for the placeholderapi
+    /// @deprecated - was used for something else
+    /// @param uuid - The players uuid
+    /// @return - The players school
 
-        if(conn == null){
-            return null;
-        }
-
-        String sql = "SELECT school FROM server_whitelists WHERE uuid = ? LIMIT 1";
-        try{
-            PreparedStatement st = conn.prepareStatement(sql);
-            st.setObject(1, uuid);
-            ResultSet rs = st.executeQuery();
-            if(rs.next()){
-                return rs.getString("school");
-            }
-        } catch (SQLException e){
-            LOGGER.error("Failed to get school for user: ", e);
-        }
-        return null;
-    }
+//    public String getPlayerSchool(UUID uuid){
+//        ConfigManager.Config cfg = configManager.get();
+//        if(conn == null){
+//            try {
+//                conn = DriverManager.getConnection(cfg.jdbcUrl(), cfg.getUsername(), cfg.getPassword());
+//            } catch (SQLException e) {
+//                LOGGER.error("Failed to connect to database", e);
+//            }
+//        }
+//
+//        if(conn == null){
+//            return null;
+//        }
+//
+//        String sql = "SELECT school FROM server_whitelists WHERE uuid = ? LIMIT 1";
+//        try{
+//            PreparedStatement st = conn.prepareStatement(sql);
+//            st.setObject(1, uuid);
+//            ResultSet rs = st.executeQuery();
+//            if(rs.next()){
+//                return rs.getString("school");
+//            }
+//        } catch (SQLException e){
+//            LOGGER.error("Failed to get school for user: ", e);
+//        }
+//        return null;
+//    }
 }

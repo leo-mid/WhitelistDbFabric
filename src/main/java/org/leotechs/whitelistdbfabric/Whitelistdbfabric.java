@@ -32,6 +32,8 @@ public class Whitelistdbfabric implements ModInitializer {
     private static ConfigManager configManager;
     private DbManager dbManager;
 
+    /// Starts up the mod and gets everything ready
+
     @Override
     public void onInitialize() {
         File configDir = new File("config");
@@ -58,6 +60,9 @@ public class Whitelistdbfabric implements ModInitializer {
         registerCommands();
         registerEvents();
 
+        /// Registered the placeholder
+        /// @deprecated
+
 //        Placeholders.register(Identifier.of("whitelistdb", "school"), (ctx, arg) -> {
 //            if (arg == null) {
 //                return PlaceholderResult.invalid("No argument!");
@@ -72,6 +77,8 @@ public class Whitelistdbfabric implements ModInitializer {
 
         System.out.println("[WhitelistDB] Loaded config and initialized database connection.");
     }
+
+    /// Makes the commands work by registering them
 
     private void registerCommands() {
         CommandRegistrationCallback.EVENT.register(
@@ -108,6 +115,10 @@ public class Whitelistdbfabric implements ModInitializer {
                                 .executes(this::unbanPlayer))
         ));
     }
+
+    /// The command to ban a player
+    /// @param context - information passed by the command
+    /// @return - if the command worked or not
 
     private int banPlayer(CommandContext<CommandSourceStack> context) throws CommandSyntaxException {
         CommandSourceStack source = context.getSource();
@@ -147,6 +158,10 @@ public class Whitelistdbfabric implements ModInitializer {
         }
     }
 
+    /// The command to unban a player
+    /// @param context - information passed by the command
+    /// @return - if the command worked or not
+
     private int unbanPlayer(CommandContext<CommandSourceStack> context) {
         CommandSourceStack source = context.getSource();
         String playerToUnban = StringArgumentType.getString(context, "player");
@@ -164,8 +179,9 @@ public class Whitelistdbfabric implements ModInitializer {
         return 0;
     }
 
+    /// Checks the player if they are banned or whitelisted before fully connecting to the server
+
     private void registerEvents() {
-        // Player join = check DB whitelist
         ServerLoginConnectionEvents.QUERY_START.register(
                 (handler, server, sender, synchronizer) -> {
 
@@ -187,8 +203,13 @@ public class Whitelistdbfabric implements ModInitializer {
         });
     }
 
-    public boolean isPlayerConnected(MinecraftServer server, UUID playerUuid) {
-        ServerPlayer player = server.getPlayerList().getPlayer(playerUuid);
+    /// Checks to see if the player that is being mentioned is currently online
+    /// @param server - the server object
+    /// @param username - the username of the player
+    /// @return - if the player is online
+
+    public boolean isPlayerConnected(MinecraftServer server, String username) {
+        ServerPlayer player = server.getPlayerList().getPlayer(username);
         // If getPlayer(uuid) returns null, the player is not currently online (i.e., is "disconnected" or offline)
         return player != null;
     }
