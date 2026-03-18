@@ -186,7 +186,7 @@ public class Whitelistdbfabric implements ModInitializer {
                 (handler, server, sender, synchronizer) -> {
 
                     GameProfile profile = ((ServerLoginNetworkHandlerAccessor) handler).getProfile();
-                    UUID uuid = profile.id();
+                    UUID uuid = profile.getId();
 
                     if (!whitelistHandler.allowPlayer(uuid)) {
                         handler.disconnect(Component.literal(configManager.getMessage()));
@@ -209,8 +209,8 @@ public class Whitelistdbfabric implements ModInitializer {
     /// @return - if the player is online
 
     public boolean isPlayerConnected(MinecraftServer server, String username) {
-        ServerPlayer player = server.getPlayerList().getPlayer(username);
-        // If getPlayer(uuid) returns null, the player is not currently online (i.e., is "disconnected" or offline)
+        UUID uuid = PlayerCache.getUuid(username);
+        ServerPlayer player = server.getPlayerList().getPlayer(uuid);
         return player != null;
     }
 }
