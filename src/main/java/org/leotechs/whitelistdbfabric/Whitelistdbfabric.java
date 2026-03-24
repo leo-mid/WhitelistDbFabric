@@ -186,7 +186,7 @@ public class Whitelistdbfabric implements ModInitializer {
                 (handler, server, sender, synchronizer) -> {
 
                     GameProfile profile = ((ServerLoginNetworkHandlerAccessor) handler).getProfile();
-                    UUID uuid = profile.getId();
+                    UUID uuid = profile.id();
 
                     if (!whitelistHandler.allowPlayer(uuid)) {
                         handler.disconnect(Component.literal(configManager.getMessage()));

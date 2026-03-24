@@ -1,5 +1,5 @@
 plugins {
-    id 'fabric-loom' version '1.15-SNAPSHOT'
+    id "net.fabricmc.fabric-loom" version '1.15-SNAPSHOT'
     id 'maven-publish'
 }
 
@@ -26,13 +26,12 @@ repositories {
 dependencies {
     // To change the versions see the gradle.properties file
     minecraft "com.mojang:minecraft:${project.minecraft_version}"
-    mappings loom.officialMojangMappings()
-    modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
+    implementation "net.fabricmc:fabric-loader:${project.loader_version}"
 
-    modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
-    include(modImplementation("me.lucko:fabric-permissions-api:${project.permission_version}"))
-    // include(modImplementation("eu.pb4:placeholder-api:${project.placeholderapi_version}"))
-    include(modImplementation("org.postgresql:postgresql:42.7.3"))
+    implementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
+    include(implementation("me.lucko:fabric-permissions-api:${project.permission_version}"))
+    // include(implementation("eu.pb4:placeholder-api:${project.placeholderapi_version}"))
+    include(implementation("org.postgresql:postgresql:42.7.3"))
 }
 
 processResources {
