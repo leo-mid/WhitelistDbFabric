@@ -82,7 +82,7 @@ public class Whitelistdbfabric implements ModInitializer {
 
     private void registerCommands() {
         CommandRegistrationCallback.EVENT.register(
-                (dispatcher, registryAccess, environment) -> dispatcher.register(
+                (dispatcher, _, _) -> dispatcher.register(
                         Commands.literal("whitelistdb")
                                 .then(Commands.literal("toggle")
                                         .requires(source -> Permissions.check(source, "whitelistdb.admin", 4))
@@ -101,14 +101,14 @@ public class Whitelistdbfabric implements ModInitializer {
                 )
         );
         CommandRegistrationCallback.EVENT.register(
-                (dispatcher, registryAccess, environment) -> dispatcher.register(
+                (dispatcher, _, _) -> dispatcher.register(
                         Commands.literal("wban")
                             .requires(source -> Permissions.check(source, "whitelistdb.admin", 4))
                                 .then(Commands.argument("player", StringArgumentType.greedyString())
                                 .executes(this::banPlayer))
         ));
         CommandRegistrationCallback.EVENT.register(
-                (dispatcher, registryAccess, environment) -> dispatcher.register(
+                (dispatcher, _, _) -> dispatcher.register(
                         Commands.literal("wunban")
                             .requires(source -> Permissions.check(source, "whitelistdb.admin", 4))
                                 .then(Commands.argument("player", StringArgumentType.greedyString())
@@ -132,12 +132,8 @@ public class Whitelistdbfabric implements ModInitializer {
             ServerPlayer player = playerManager.getPlayerByName(playerToBan);
             if(player != null){
                 if(dbManager.banPlayer(player.getUUID())){
-                    if (player != null){
-                        player.connection.disconnect(Component.literal(reason).withStyle(ChatFormatting.RED));
-                        source.sendSuccess(() -> Component.literal("Banned player: " + playerToBan), true);
-                    } else{
-                        source.sendSuccess(() -> Component.literal("Banned player: " + playerToBan), true);
-                    }
+                    player.connection.disconnect(Component.literal(reason).withStyle(ChatFormatting.RED));
+                    source.sendSuccess(() -> Component.literal("Banned player: " + playerToBan), true);
                     return 1;
                 }
             } else {

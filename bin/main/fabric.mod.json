@@ -11,7 +11,7 @@
   "environment": "server",
   "entrypoints": {
     "main": [
-      "org.campuscraft.whitelistdbfabric.Whitelistdbfabric"
+      "org.leotechs.whitelistdbfabric.Whitelistdbfabric"
     ]
   },
   "depends": {
