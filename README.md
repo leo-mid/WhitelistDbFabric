@@ -42,7 +42,7 @@ Default layout of `config/whitelistdb-config.json`
 ```
 
 ## Mod Information
-Current version: 1.3.2
+Current version: 1.3.3
 
 Versions Supported: 26.1
 

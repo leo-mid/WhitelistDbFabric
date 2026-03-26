@@ -19,10 +19,6 @@ repositories {
     // for more information about repositories.
     mavenLocal()
 
-    // Thanks to @sakura-ryoko for temp use till main is updated
-    maven { url = 'https://maven.sakuraryoko.com'
-        content { includeGroupAndSubgroups("me.lucko") }
-    }
     maven {
         url "https://maven.nucleoid.xyz/"
         name "Nucleoid"
